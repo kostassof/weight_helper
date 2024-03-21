@@ -8,11 +8,13 @@ class WeightHelper
     @height = height
   end
 
+  attr_reader :weight, :height
+
   def self.calculate(weight, height)
     measurements = new(weight, height)
     return nil unless measurements.valid?
 
-    measurements.send(:bmi)
+    measurements.send(:bmi).round(1)
   end
 
   def self.bmi_category(weight, height)
@@ -24,13 +26,14 @@ class WeightHelper
 
   private
 
-  attr_reader :weight, :height
-
   validates_numericality_of :weight, only_numeric: true, greater_than: 0
   validates_numericality_of :height, only_numeric: true, greater_than: 0
 
   def bmi
-    weight / height**2
+    # Height needs to be converted to meters
+    converted_height = height / 100.to_f
+
+    weight / converted_height**2
   end
 
   def bmi_category
